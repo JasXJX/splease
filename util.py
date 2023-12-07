@@ -1,6 +1,7 @@
 # import numpy as np
 # import pandas
 
+
 # Method for calculating results (i.e. each person's subtotal, tips, etc.)
 def calculator(items: dict[str: list],
                tip: float, tax: float) -> (list[str], list[list[float]]):
@@ -37,3 +38,48 @@ def calculator(items: dict[str: list],
     for i in range(len(subtotals)):
         results.append([subtotals[i], tips[i], taxes[i]])
     return names, results
+
+
+class receipt():
+    def __init__(self):
+        self.data = {"item": [], "price": [], "for": []}
+
+    def add_item(self, item: str, price: float, person: str):
+        self.data["item"] = item
+        self.data["price"] = price
+        self.data["for"] = person
+
+    def print(self):
+        items = self.data["item"]
+        prices = self.data["price"]
+        people = self.data["for"]
+        tb = self.textbox(left_align=True)
+        output = [tb.print("Item"), "|",
+                  tb.print("Price"), "|",
+                  tb.print("For"), "\n",
+                  "".join(["-"*38])]
+        tb.left_align = False
+        for item, price, person in zip(items, prices, people):
+            
+
+    class textbox():
+        # left_align = False
+
+        def __init__(self,
+                     size: int = 12,
+                     left_align: str = False):
+            self.size = size
+            self.left_align = left_align
+
+        def print(self, text: str) -> str:
+            if len(text) <= self.size:
+                if self.left_align:
+                    return text.ljust(self.size)
+                else:
+                    return text.rjust(self.size)
+            else:
+                return text[0:self.size-3] + "..."
+
+
+def make_table(names: list[str], results: list[list[float]]):
+    pass
