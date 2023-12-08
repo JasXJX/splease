@@ -37,3 +37,10 @@ def calculator(items: dict[str: list],
     for i in range(len(subtotals)):
         results.append([subtotals[i], tips[i], taxes[i]])
     return names, results
+
+# Next steps: store data in sql / make frontend display
+# Decided: use MySQL for DB.
+# Need to figure out how to implement: using SQLAlchemy, directly connecting, or Docker
+# If use SQLAlchemy/direct connect: install MySQL and go ahead
+# If use Docker just build as normal and do Docker Compose later
+# MySQL is still good as it can show multi-container builds
