@@ -14,6 +14,10 @@ My goal is to create a utility tool for computing the fair share of each receipt
 
 Building a draft front end process.
 
+Thoughts for visualization: 
+
+- Maybe I can use Markdown file instead of directly printing on cli?
+
 ## Future work
 
 - Setting up database for history

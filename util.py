@@ -1,7 +1,3 @@
-# import numpy as np
-# import pandas
-
-
 # Method for calculating results (i.e. each person's subtotal, tips, etc.)
 def calculator(items: dict[str: list],
                tip: float, tax: float) -> (list[str], list[list[float]]):
@@ -46,14 +42,21 @@ def calculator(items: dict[str: list],
 # If use Docker just build as normal and do Docker Compose later
 # MySQL is still good as it can show multi-container builds
 
+
+# An object to keep track of the receipt and for printing receipts
 class receipt():
     def __init__(self):
         self.data = {"item": [], "price": [], "for": []}
 
     def add_item(self, item: str, price: float, person: str):
-        self.data["item"] = item
-        self.data["price"] = price
-        self.data["for"] = person
+        self.data["item"].append(item)
+        self.data["price"].append(price)
+        self.data["for"].append(person)
+
+    def pop_item(self):
+        self.data["item"].pop()
+        self.data["price"].pop()
+        self.data["for"].pop()
 
     def print(self):
         items = self.data["item"]
@@ -66,10 +69,12 @@ class receipt():
                   "".join(["-"*38])]
         tb.left_align = False
         for item, price, person in zip(items, prices, people):
-            pass
+            output.append(tb.print(item), "|",
+                          price, "|",
+                          person, "\n")
+        return "".join(output)
 
     class textbox():
-        # left_align = False
 
         def __init__(self,
                      size: int = 12,
