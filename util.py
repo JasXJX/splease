@@ -47,35 +47,39 @@ def calculator(items: dict[str, dict[str, list]],
 
 
 # An object to keep track of the receipt and for printing receipts
-class receipt():
-    def __init__(self):
-        self.data = {"item": [], "price": [], "for": []}
+class Receipt():
+    def __init__(self, subreceipt: bool = False):
+        if subreceipt:
+            self.data = {"item": [], "price": []}
+        else:
+            self.data = {"item": [], "price": [], "for": []}
+            tb = self.Textbox(left_align=True)
+            self.printer = ["".join((tb.print("Item"), "|",
+                                     tb.print("Price"), "|",
+                                     tb.print("For"))),
+                            "".join("-"*(tb.size*3 + 2))]
 
     def add_item(self, item: str, price: Decimal, person: str):
         self.data["item"].append(item)
         self.data["price"].append(price)
         self.data["for"].append(person)
+        tb = self.Textbox()
+        output = "".join((tb.print(item), "|",
+                          tb.print(str(price)), "|",
+                          tb.print(person)))
+        self.printer.append(output)
 
     def pop_item(self):
         self.data["item"].pop()
         self.data["price"].pop()
         self.data["for"].pop()
+        self.printer.pop()
+
+    def calc_total(self):
+        pass
 
     def print(self) -> str:
-        items = self.data["item"]
-        prices = self.data["price"]
-        people = self.data["for"]
-        tb = self.textbox(left_align=True)
-        output = [tb.print("Item"), "|",
-                  tb.print("Price"), "|",
-                  tb.print("For"), "\n",
-                  "".join(["-"*38])]
-        tb.left_align = False
-        for item, price, person in zip(items, prices, people):
-            output.append(tb.print(item), "|",
-                          price, "|",
-                          person, "\n")
-        return "".join(output)
+        return "\n".join(self.printer)
 
     def output_data(self) -> dict:
         output: dict[str, dict[str, list]] = {}
@@ -90,11 +94,11 @@ class receipt():
                 output[person]["price"] = [price]
         return output
 
-    class textbox():
+    class Textbox():
 
         def __init__(self,
                      size: int = 12,
-                     left_align: str = False):
+                     left_align: bool = False):
             self.size = size
             self.left_align = left_align
 
