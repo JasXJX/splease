@@ -58,7 +58,7 @@ class receipt():
         self.data["price"].pop()
         self.data["for"].pop()
 
-    def print(self):
+    def print(self) -> str:
         items = self.data["item"]
         prices = self.data["price"]
         people = self.data["for"]
@@ -73,6 +73,17 @@ class receipt():
                           price, "|",
                           person, "\n")
         return "".join(output)
+    
+    def output_data(self) -> dict:
+        output: dict(dict(list)) = {}
+        for item, price, person in zip(self.data["item"], self.data["price"], self.data["for"]):
+            if person in output:
+                output[person]["item"].append(item)
+                output[person]["price"].append(price)
+            else:
+                output[person]["item"] = [item]
+                output[person]["price"] = [price]
+        return output
 
     class textbox():
 
