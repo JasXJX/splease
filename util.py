@@ -1,20 +1,23 @@
+from decimal import Decimal
+
+
 # Method for calculating results (i.e. each person's subtotal, tips, etc.)
-def calculator(items: dict[str: list],
-               tip: float, tax: float) -> (list[str], list[list[float]]):
+def calculator(items: dict[str, dict[str, list]],
+               tip: Decimal, tax: Decimal) -> (list[str], list[list[float]]):
 
     # Calculates the subtotal of each person;
     # because this method returns data in lists,
-    # an additional list of names is used to keep track of which person is
-    # each index for
+    # an additional list of names is used to keep track of which person each
+    # index is for
     subtotals = []
     names = []
     for person in items:
-        if person != "Shared":
+        if person != "everyone":
             names.append(person)
-            subtotals.append(sum(items[person]))
+            subtotals.append(sum(items[person]["price"]))
 
     # Adding shared items to each person's subtotal
-    shared_total = sum(items["Shared"])
+    shared_total = sum(items["everyone"]["price"])
     shared_per_person = shared_total/len(subtotals)
     subtotals = [i + shared_per_person for i in subtotals]
     total = sum(subtotals)
@@ -37,7 +40,7 @@ def calculator(items: dict[str: list],
 
 # Next steps: store data in sql / make frontend display
 # Decided: use MySQL for DB.
-# Need to figure out how to implement: using SQLAlchemy, directly connecting, or Docker
+# Need to figure out how to implement: use SQLAlchemy/direct connect/Docker
 # If use SQLAlchemy/direct connect: install MySQL and go ahead
 # If use Docker just build as normal and do Docker Compose later
 # MySQL is still good as it can show multi-container builds
@@ -48,7 +51,7 @@ class receipt():
     def __init__(self):
         self.data = {"item": [], "price": [], "for": []}
 
-    def add_item(self, item: str, price: float, person: str):
+    def add_item(self, item: str, price: Decimal, person: str):
         self.data["item"].append(item)
         self.data["price"].append(price)
         self.data["for"].append(person)
@@ -73,10 +76,12 @@ class receipt():
                           price, "|",
                           person, "\n")
         return "".join(output)
-    
+
     def output_data(self) -> dict:
-        output: dict(dict(list)) = {}
-        for item, price, person in zip(self.data["item"], self.data["price"], self.data["for"]):
+        output: dict[str, dict[str, list]] = {}
+        for item, price, person in zip(self.data["item"],
+                                       self.data["price"],
+                                       self.data["for"]):
             if person in output:
                 output[person]["item"].append(item)
                 output[person]["price"].append(price)
