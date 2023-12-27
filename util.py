@@ -14,10 +14,10 @@ def calculator(items: dict[str, dict[str, list]],
     for person in items:
         if person != "everyone":
             names.append(person)
-            subtotals.append(sum(items[person]["price"]))
+            subtotals.append(sum(Decimal(items[person]["price"])))
 
     # Adding shared items to each person's subtotal
-    shared_total = sum(items["everyone"]["price"])
+    shared_total = sum(Decimal(items["everyone"]["price"]))
     shared_per_person = shared_total/len(subtotals)
     subtotals = [i + shared_per_person for i in subtotals]
     total = sum(subtotals)
@@ -54,29 +54,52 @@ class Receipt():
         else:
             self.data = {"item": [], "price": [], "for": []}
             tb = self.Textbox(left_align=True)
+            self.total = Decimal(0)
             self.printer = ["".join((tb.print("Item"), "|",
                                      tb.print("Price"), "|",
                                      tb.print("For"))),
-                            "".join("-"*(tb.size*3 + 2))]
+                            "".join(tb.sep_sect())]
+            self.finals = []
 
-    def add_item(self, item: str, price: Decimal, person: str):
+    def add_item(self, item: str, price: str, person: str):
         self.data["item"].append(item)
         self.data["price"].append(price)
         self.data["for"].append(person)
+        self.total += Decimal(price)
         tb = self.Textbox()
-        output = "".join((tb.print(item), "|",
-                          tb.print(str(price)), "|",
-                          tb.print(person)))
-        self.printer.append(output)
+        self.printer.append("".join((tb.print(item), "|",
+                                     tb.print(price), "|",
+                                     tb.print(person))))
+
+    def add_tip_n_tax(self, tip: str, tax: str):
+        self.tip = tip
+        self.tax = tax
 
     def pop_item(self):
         self.data["item"].pop()
-        self.data["price"].pop()
+        self.total -= Decimal(self.data["price"].pop())
         self.data["for"].pop()
         self.printer.pop()
 
-    def calc_total(self):
-        pass
+    def change_tip_or_tax(self, ch_tip: bool, new_amt: str):
+        if ch_tip:
+            old_amt = Decimal(self.tip)
+            self.tip = new_amt
+        else:
+            old_amt = Decimal(self.tax)
+            self.tax = new_amt
+        self.total += Decimal(new_amt) - old_amt
+
+    def add_final_text(self):
+        tb = self.Textbox()
+        self.printer.append((tb.sep_sect(),
+                             "".join(tb.print("Tips"), "|",
+                                     tb.print(self.tip), "|"),
+                             "".join(tb.print("Tax"), "|",
+                                     tb.print(self.tax), "|"),
+                             tb.sep_sect(),
+                             "".join(tb.print("Total"), "|",
+                                     tb.print(self.total), "|")))
 
     def print(self) -> str:
         return "\n".join(self.printer)
@@ -92,7 +115,7 @@ class Receipt():
             else:
                 output[person]["item"] = [item]
                 output[person]["price"] = [price]
-        return output
+        return output, self.tip, self.tax
 
     class Textbox():
 
@@ -101,6 +124,10 @@ class Receipt():
                      left_align: bool = False):
             self.size = size
             self.left_align = left_align
+            self.sectioner = "-" * (size * 3 + 2)
+
+        def sep_sect(self) -> str:
+            return self.sectioner
 
         def print(self, text: str) -> str:
             if len(text) <= self.size:
