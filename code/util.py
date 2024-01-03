@@ -47,7 +47,7 @@ def calculator(items: dict[str, dict[str, list]],
 
 
 # An object to keep track of the receipt and for printing receipts
-class Receipt():
+class Receipt(object):
     def __init__(self, subreceipt: bool = False):
         if subreceipt:
             self.data = {"item": [], "price": []}
@@ -117,7 +117,7 @@ class Receipt():
                 output[person]["price"] = [price]
         return output, self.tip, self.tax
 
-    class Textbox():
+    class Textbox(object):
 
         def __init__(self,
                      size: int = 12,
@@ -125,6 +125,12 @@ class Receipt():
             self.size = size
             self.left_align = left_align
             self.sectioner = "-" * (size * 3 + 2)
+
+        def left(self):
+            self.left_align = True
+
+        def right(self):
+            self.left_align = False
 
         def sep_sect(self) -> str:
             return self.sectioner
