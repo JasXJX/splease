@@ -22,3 +22,9 @@ Thoughts for visualization:
 
 - Setting up database for history
 
+- Supporting shared items that's not shared between everyone in the group
+
+- Change frontend from cli to web/GUI
+
+- Change receipt class to double up as individual receipts after bill splitting
+
