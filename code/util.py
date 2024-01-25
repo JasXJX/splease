@@ -117,14 +117,14 @@ class Receipt(object):
                 output[person]["price"] = [price]
         return output, self.tip, self.tax
 
-    class Textbox(object):
+    class _Textbox(object):
 
         def __init__(self,
                      size: int = 12,
                      left_align: bool = False):
             self.size = size
             self.left_align = left_align
-            self.sectioner = "-" * (size * 3 + 2)
+            self.sectioner = "-" * (size*3 + 2)
 
         def left(self):
             self.left_align = True
